@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - ZSMP</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .admin-container {
+            min-height: 100vh;
+            padding: 120px 2rem 2rem;
+        }
+
+        .admin-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .admin-header h1 {
+            font-family: 'Orbitron', monospace;
+            font-size: clamp(2rem, 5vw, 3rem);
+            background: linear-gradient(135deg, var(--primary-red), var(--light-red));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .admin-header p {
+            color: var(--text-muted);
+        }
+
+        .admin-tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid var(--glass-border);
+            overflow-x: auto;
+            padding-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .admin-tab {
+            padding: 0.8rem 1.5rem;
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-weight: 600;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+            white-space: nowrap;
+        }
+
+        .admin-tab:hover {
+            color: var(--primary-red);
+        }
+
+        .admin-tab.active {
+            color: var(--primary-red);
+            border-bottom-color: var(--primary-red);
+        }
+
+        .admin-content {
+            display: none;
+        }
+
+        .admin-content.active {
+            display: block;
+            animation: slideInUp 0.3s ease-out;
+        }
+
+        .admin-form {
+            background: linear-gradient(135deg, var(--glass-bg), rgba(255, 23, 68, 0.05));
+            border: 2px solid var(--glass-border);
+            border-radius: 15px;
+            padding: 2rem;
+            backdrop-filter: blur(20px);
+            margin-bottom: 2rem;
+        }
+
+        .admin-form h3 {
+            color: var(--light-red);
+            margin-bottom: 1.5rem;
+            font-size: 1.3rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            color: var(--primary-red);
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 0.8rem;
+            background: rgba(0, 0, 0, 0.3);
+            border: 2px solid var(--glass-border);
+            border-radius: 8px;
+            color: var(--text-light);
+            font-family: 'Inter', sans-serif;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--primary-red);
+            box-shadow: 0 0 20px rgba(255, 23, 68, 0.3);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .form-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+        }
+
+        .btn-submit {
+            padding: 0.8rem 2rem;
+            background: linear-gradient(135deg, var(--primary-red), var(--dark-red));
+            border: none;
+            border-radius: 8px;
+            color: #fff;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 0 25px rgba(255, 23, 68, 0.5);
+        }
+
+        .btn-reset {
+            padding: 0.8rem 2rem;
+            background: transparent;
+            border: 2px solid var(--text-muted);
+            border-radius: 8px;
+            color: var(--text-muted);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-reset:hover {
+            border-color: var(--primary-red);
+            color: var(--primary-red);
+        }
+
+        .admin-list {
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        .admin-item {
+            background: linear-gradient(135deg, var(--glass-bg), rgba(255, 23, 68, 0.03));
+            border: 2px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .admin-item:hover {
+            border-color: var(--primary-red);
+            box-shadow: 0 0 20px rgba(255, 23, 68, 0.3);
+        }
+
+        .admin-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 1rem;
+            gap: 1rem;
+        }
+
+        .admin-item-title {
+            color: var(--light-red);
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .admin-item-content {
+            color: var(--text-light);
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+
+        .admin-item-actions {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.85rem;
+            transition: all 0.3s ease;
+        }
+
+        .action-btn.approve {
+            background: rgba(0, 255, 0, 0.2);
+            color: var(--accent-green);
+            border: 1px solid var(--accent-green);
+        }
+
+        .action-btn.approve:hover {
+            background: rgba(0, 255, 0, 0.3);
+        }
+
+        .action-btn.reject {
+            background: rgba(255, 100, 100, 0.2);
+            color: #ff6464;
+            border: 1px solid #ff6464;
+        }
+
+        .action-btn.reject:hover {
+            background: rgba(255, 100, 100, 0.3);
+        }
+
+        .action-btn.delete {
+            background: rgba(255, 23, 68, 0.2);
+            color: var(--primary-red);
+            border: 1px solid var(--primary-red);
+        }
+
+        .action-btn.delete:hover {
+            background: rgba(255, 23, 68, 0.3);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .stats-box {
+            background: linear-gradient(135deg, var(--glass-bg), rgba(255, 23, 68, 0.05));
+            border: 2px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .stats-box:hover {
+            border-color: var(--primary-red);
+            box-shadow: 0 0 20px rgba(255, 23, 68, 0.3);
+        }
+
+        .stats-number {
+            font-family: 'Orbitron', monospace;
+            font-size: 2.5rem;
+            color: var(--primary-red);
+            font-weight: 900;
+        }
+
+        .stats-label {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem 2rem;
+            color: var(--text-muted);
+        }
+
+        .empty-state-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .password-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            backdrop-filter: blur(5px);
+        }
+
+        .password-modal.hidden {
+            display: none;
+        }
+
+        .password-box {
+            background: linear-gradient(135deg, var(--dark-bg), rgba(255, 23, 68, 0.1));
+            border: 2px solid var(--primary-red);
+            border-radius: 15px;
+            padding: 3rem;
+            max-width: 400px;
+            width: 90%;
+            backdrop-filter: blur(20px);
+            animation: slideInUp 0.3s ease-out;
+        }
+
+        .password-box h2 {
+            color: var(--light-red);
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .password-box input {
+            width: 100%;
+            padding: 0.8rem;
+            background: rgba(0, 0, 0, 0.3);
+            border: 2px solid var(--glass-border);
+            border-radius: 8px;
+            color: var(--text-light);
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .password-box input:focus {
+            outline: none;
+            border-color: var(--primary-red);
+            box-shadow: 0 0 20px rgba(255, 23, 68, 0.3);
+        }
+
+        .password-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: space-between;
+        }
+
+        .password-box button {
+            flex: 1;
+            padding: 0.8rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .password-box .btn-submit {
+            background: linear-gradient(135deg, var(--primary-red), var(--dark-red));
+            color: #fff;
+        }
+
+        .password-box .btn-reset {
+            background: transparent;
+            border: 2px solid var(--text-muted);
+            color: var(--text-muted);
+        }
+
+        .password-error {
+            color: #ff6464;
+            text-align: center;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="animated-bg"></div>
+    <div class="bg-particles" id="particleContainer"></div>
+    <div class="cursor-glow" id="cursorGlow"></div>
+
+    <!-- Password Modal -->
+    <div class="password-modal" id="passwordModal">
+        <div class="password-box">
+            <h2>🔐 Admin Access</h2>
+            <div class="password-error" id="passwordError" style="display: none;">Incorrect password</div>
+            <input type="password" id="passwordInput" placeholder="Enter admin password" onkeypress="if(event.key==='Enter') checkPassword()">
+            <div class="password-buttons">
+                <button type="button" class="btn-submit" onclick="checkPassword()">Enter</button>
+                <button type="button" class="btn-reset" onclick="window.location.href='index.html'">Go Back</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">ZSMP</div>
+            <ul class="nav-links" id="navLinks" style="gap: 1rem;">
+                <li><a href="index.html">← Back to Home</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Admin Container -->
+    <div class="admin-container">
+        <div class="section-container">
+            <div class="admin-header">
+                <h1>Admin Dashboard</h1>
+                <p>Manage announcements, suggestions, and changelog</p>
+            </div>
+
+            <!-- Stats Overview -->
+            <div class="stats-grid">
+                <div class="stats-box">
+                    <div class="stats-number" id="statsAnnouncements">0</div>
+                    <div class="stats-label">Announcements</div>
+                </div>
+                <div class="stats-box">
+                    <div class="stats-number" id="statsSuggestions">0</div>
+                    <div class="stats-label">Suggestions</div>
+                </div>
+                <div class="stats-box">
+                    <div class="stats-number" id="statsChangelog">0</div>
+                    <div class="stats-label">Changelog Entries</div>
+                </div>
+                <div class="stats-box">
+                    <div class="stats-number" id="statsPending">0</div>
+                    <div class="stats-label">Pending Items</div>
+                </div>
+            </div>
+
+            <!-- Tabs -->
+            <div class="admin-tabs">
+                <button class="admin-tab active" onclick="switchTab('announcements')">📢 Announcements</button>
+                <button class="admin-tab" onclick="switchTab('suggestions')">💡 Suggestions</button>
+                <button class="admin-tab" onclick="switchTab('changelog')">📋 Changelog</button>
+                <button class="admin-tab" onclick="switchTab('settings')">⚙️ Settings</button>
+            </div>
+
+            <!-- Announcements Tab -->
+            <div class="admin-content active" id="announcements">
+                <div class="admin-form">
+                    <h3>Create New Announcement</h3>
+                    <form onsubmit="postAnnouncement(event)">
+                        <div class="form-group">
+                            <label for="announcementTitleInput">Title</label>
+                            <input type="text" id="announcementTitleInput" placeholder="e.g., Server Maintenance" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="announcementContentInput">Message</label>
+                            <textarea id="announcementContentInput" placeholder="Write your announcement..." required></textarea>
+                        </div>
+                        <div class="form-buttons">
+                            <button type="reset" class="btn-reset">Clear</button>
+                            <button type="submit" class="btn-submit">Post Announcement</button>
+                        </div>
+                    </form>
+                </div>
+
+                <h3 style="color: var(--light-red); margin: 2rem 0;">Recent Announcements</h3>
+                <div id="announcementsList" class="admin-list">
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📢</div>
+                        <p>No announcements yet</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Suggestions Tab -->
+            <div class="admin-content" id="suggestions">
+                <h3 style="color: var(--light-red); margin-bottom: 2rem;">Manage Suggestions</h3>
+                <div id="suggestionsList" class="admin-list">
+                    <div class="empty-state">
+                        <div class="empty-state-icon">💡</div>
+                        <p>No suggestions yet</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Changelog Tab -->
+            <div class="admin-content" id="changelog">
+                <div class="admin-form">
+                    <h3>Create Changelog Entry</h3>
+                    <form onsubmit="addChangelogEntry(event)">
+                        <div class="form-group">
+                            <label for="changelogTitle">Title</label>
+                            <input type="text" id="changelogTitle" placeholder="e.g., Bug Fixes and Balance Changes" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="changelogContent">Description</label>
+                            <textarea id="changelogContent" placeholder="Describe the changes..." required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="changelogTag">Category</label>
+                            <select id="changelogTag" required>
+                                <option value="">Select a category</option>
+                                <option value="added">Added</option>
+                                <option value="fixed">Fixed</option>
+                                <option value="change">Changed</option>
+                                <option value="removed">Removed</option>
+                            </select>
+                        </div>
+                        <div class="form-buttons">
+                            <button type="reset" class="btn-reset">Clear</button>
+                            <button type="submit" class="btn-submit">Add Entry</button>
+                        </div>
+                    </form>
+                </div>
+
+                <h3 style="color: var(--light-red); margin: 2rem 0;">Changelog Entries</h3>
+                <div id="changelogList" class="admin-list">
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📋</div>
+                        <p>No entries yet</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Settings Tab -->
+            <div class="admin-content" id="settings">
+                <div class="admin-form">
+                    <h3>Site Settings</h3>
+                    <form onsubmit="saveSettings(event)">
+                        <div class="form-group">
+                            <label for="settingsServerIP">Server IP</label>
+                            <input type="text" id="settingsServerIP" placeholder="zsmp.eagler.host">
+                        </div>
+                        <div class="form-group">
+                            <label for="settingsDiscord">Discord URL</label>
+                            <input type="text" id="settingsDiscord" placeholder="https://discord.gg/zsmp">
+                        </div>
+                        <div class="form-group">
+                            <label for="settingsHeroTitle">Hero Title</label>
+                            <input type="text" id="settingsHeroTitle" placeholder="ZSMP">
+                        </div>
+                        <div class="form-group">
+                            <label for="settingsHeroSubtitle">Hero Subtitle</label>
+                            <input type="text" id="settingsHeroSubtitle" placeholder="Season 4 Coming Soon">
+                        </div>
+                        <div class="form-buttons">
+                            <button type="reset" class="btn-reset">Reset</button>
+                            <button type="submit" class="btn-submit">Save Settings</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script src="script.js"></script>
+    <script>
+        // Password protection
+        const ADMIN_PASSWORD = 'admin123'; // Change this!
+
+        function checkPassword() {
+            const input = document.getElementById('passwordInput').value;
+            const errorEl = document.getElementById('passwordError');
+
+            if (input === ADMIN_PASSWORD) {
+                document.getElementById('passwordModal').classList.add('hidden');
+                initializeAdmin();
+            } else {
+                errorEl.style.display = 'block';
+                document.getElementById('passwordInput').value = '';
+                setTimeout(() => {
+                    errorEl.style.display = 'none';
+                }, 3000);
+            }
+        }
+
+        function initializeAdmin() {
+            generateParticles();
+            setupCursorGlow();
+            updateStatsOverview();
+            loadAdminLists();
+            loadSettings();
+        }
+
+        function switchTab(tabName) {
+            document.querySelectorAll('.admin-content').forEach(el => {
+                el.classList.remove('active');
+            });
+            document.querySelectorAll('.admin-tab').forEach(el => {
+                el.classList.remove('active');
+            });
+
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+
+            if (tabName === 'suggestions') {
+                loadSuggestionsAdmin();
+            } else if (tabName === 'changelog') {
+                loadChangelogAdmin();
+            } else if (tabName === 'announcements') {
+                loadAnnouncementsAdmin();
+            }
+        }
+
+        function updateStatsOverview() {
+            const announcements = getStoredData(CONFIG.STORAGE_KEYS.announcements);
+            const suggestions = getStoredData(CONFIG.STORAGE_KEYS.suggestions);
+            const changelog = getStoredData(CONFIG.STORAGE_KEYS.changelog);
+            const pending = suggestions.filter(s => s.status === 'pending').length;
+
+            document.getElementById('statsAnnouncements').textContent = announcements.length;
+            document.getElementById('statsSuggestions').textContent = suggestions.length;
+            document.getElementById('statsChangelog').textContent = changelog.length;
+            document.getElementById('statsPending').textContent = pending;
+        }
+
+        function loadAdminLists() {
+            loadAnnouncementsAdmin();
+            loadSuggestionsAdmin();
+            loadChangelogAdmin();
+        }
+
+        function loadAnnouncementsAdmin() {
+            const container = document.getElementById('announcementsList');
+            const announcements = getStoredData(CONFIG.STORAGE_KEYS.announcements);
+
+            if (announcements.length === 0) {
+                container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📢</div><p>No announcements yet</p></div>';
+                return;
+            }
+
+            container.innerHTML = announcements.map((item, index) => `
+                <div class="admin-item" style="animation-delay: ${index * 0.05}s;">
+                    <div class="admin-item-header">
+                        <div>
+                            <div class="admin-item-title">${escapeHtml(item.title)}</div>
+                            <small style="color: var(--text-muted);">${item.timestamp}</small>
+                        </div>
+                    </div>
+                    <div class="admin-item-content">${escapeHtml(item.content)}</div>
+                    <div class="admin-item-actions">
+                        <button class="action-btn delete" onclick="deleteAnnouncement(${item.id})">Delete</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function loadSuggestionsAdmin() {
+            const container = document.getElementById('suggestionsList');
+            const suggestions = getStoredData(CONFIG.STORAGE_KEYS.suggestions);
+
+            if (suggestions.length === 0) {
+                container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">💡</div><p>No suggestions yet</p></div>';
+                return;
+            }
+
+            container.innerHTML = suggestions.map((item, index) => `
+                <div class="admin-item" style="animation-delay: ${index * 0.05}s;">
+                    <div class="admin-item-header">
+                        <div>
+                            <div class="admin-item-title">${escapeHtml(item.author)}</div>
+                            <small style="color: var(--text-muted);">${item.timestamp}</small>
+                        </div>
+                    </div>
+                    <div class="admin-item-content">${escapeHtml(item.content)}</div>
+                    <div class="admin-item-actions">
+                        <button class="action-btn approve" onclick="updateSuggestionStatus(${item.id}, 'approved')">Approve</button>
+                        <button class="action-btn reject" onclick="updateSuggestionStatus(${item.id}, 'rejected')">Reject</button>
+                        <button class="action-btn delete" onclick="deleteSuggestion(${item.id})">Delete</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function loadChangelogAdmin() {
+            const container = document.getElementById('changelogList');
+            const changelog = getStoredData(CONFIG.STORAGE_KEYS.changelog);
+
+            if (changelog.length === 0) {
+                container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📋</div><p>No entries yet</p></div>';
+                return;
+            }
+
+            container.innerHTML = changelog.map((item, index) => `
+                <div class="admin-item" style="animation-delay: ${index * 0.05}s;">
+                    <div class="admin-item-header">
+                        <div>
+                            <div class="admin-item-title">v${item.version} - ${escapeHtml(item.title)}</div>
+                            <small style="color: var(--text-muted);">${item.date}</small>
+                        </div>
+                    </div>
+                    <div class="admin-item-content">${escapeHtml(item.content)}</div>
+                    <div class="admin-item-actions">
+                        <button class="action-btn delete" onclick="deleteChangelog(${item.id})">Delete</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function deleteSuggestion(id) {
+            if (confirm('Delete this suggestion?')) {
+                let suggestions = getStoredData(CONFIG.STORAGE_KEYS.suggestions);
+                suggestions = suggestions.filter(s => s.id !== id);
+                saveData(CONFIG.STORAGE_KEYS.suggestions, suggestions);
+                loadSuggestionsAdmin();
+                updateStatsOverview();
+                showToast('✓ Suggestion deleted', 'success');
+            }
+        }
+
+        function deleteAnnouncement(id) {
+            if (confirm('Delete this announcement?')) {
+                let announcements = getStoredData(CONFIG.STORAGE_KEYS.announcements);
+                announcements = announcements.filter(a => a.id !== id);
+                saveData(CONFIG.STORAGE_KEYS.announcements, announcements);
+                loadAnnouncementsAdmin();
+                updateStatsOverview();
+                showToast('✓ Announcement deleted', 'success');
+            }
+        }
+
+        function deleteChangelog(id) {
+            if (confirm('Delete this changelog entry?')) {
+                let changelog = getStoredData(CONFIG.STORAGE_KEYS.changelog);
+                changelog = changelog.filter(c => c.id !== id);
+                saveData(CONFIG.STORAGE_KEYS.changelog, changelog);
+                loadChangelogAdmin();
+                updateStatsOverview();
+                showToast('✓ Entry deleted', 'success');
+            }
+        }
+
+        function loadSettings() {
+            const settings = getSettings();
+            document.getElementById('settingsServerIP').value = settings.serverIP;
+            document.getElementById('settingsDiscord').value = settings.discordURL;
+            document.getElementById('settingsHeroTitle').value = settings.heroTitle;
+            document.getElementById('settingsHeroSubtitle').value = settings.heroSubtitle;
+        }
+
+        function saveSettings(event) {
+            event.preventDefault();
+
+            const settings = {
+                serverIP: document.getElementById('settingsServerIP').value,
+                discordURL: document.getElementById('settingsDiscord').value,
+                heroTitle: document.getElementById('settingsHeroTitle').value,
+                heroSubtitle: document.getElementById('settingsHeroSubtitle').value
+            };
+
+            saveData(CONFIG.STORAGE_KEYS.settings, settings);
+            showToast('✓ Settings saved successfully!', 'success');
+        }
+
+        // Override postAnnouncement to refresh list
+        const originalPostAnnouncement = window.postAnnouncement;
+        window.postAnnouncement = function(event) {
+            originalPostAnnouncement(event);
+            loadAnnouncementsAdmin();
+            updateStatsOverview();
+        };
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            // Keep password modal visible until correct password
+        });
+    </script>
+</body>
+</html>
