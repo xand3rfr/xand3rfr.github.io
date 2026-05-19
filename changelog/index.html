@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Changelog - ZSMP Minecraft Server</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .changelog-timeline {
+            position: relative;
+            padding: 2rem 0;
+        }
+
+        .changelog-timeline::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 3px;
+            height: 100%;
+            background: linear-gradient(180deg, var(--primary-red), transparent);
+        }
+
+        @media (max-width: 768px) {
+            .changelog-timeline::before {
+                left: 20px;
+            }
+        }
+
+        .changelog-entry {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 3rem;
+            align-items: start;
+        }
+
+        .changelog-entry:nth-child(odd) .changelog-content {
+            order: -1;
+        }
+
+        @media (max-width: 768px) {
+            .changelog-entry {
+                grid-template-columns: 1fr;
+            }
+
+            .changelog-entry:nth-child(odd) .changelog-content {
+                order: 0;
+            }
+        }
+
+        .changelog-dot {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: var(--primary-red);
+            border: 4px solid var(--dark-bg);
+            border-radius: 50%;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+            box-shadow: 0 0 20px rgba(255, 23, 68, 0.6);
+        }
+
+        @media (max-width: 768px) {
+            .changelog-dot {
+                left: 20px;
+            }
+        }
+
+        .changelog-content {
+            background: linear-gradient(135deg, var(--glass-bg), rgba(255, 23, 68, 0.05));
+            border: 2px solid var(--glass-border);
+            border-radius: 15px;
+            padding: 2rem;
+            backdrop-filter: blur(20px);
+            transition: all 0.3s ease;
+            animation: slideInUp 0.6s ease-out;
+            animation-fill-mode: both;
+        }
+
+        .changelog-content:hover {
+            border-color: var(--primary-red);
+            box-shadow: 0 0 30px rgba(255, 23, 68, 0.4);
+            transform: translateY(-5px);
+        }
+
+        .changelog-version {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.5rem;
+            font-weight: 900;
+            color: var(--primary-red);
+            margin-bottom: 0.5rem;
+        }
+
+        .changelog-date {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            margin-bottom: 1rem;
+        }
+
+        .changelog-tag {
+            display: inline-block;
+            padding: 0.4rem 0.8rem;
+            border-radius: 5px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-right: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .changelog-tag.added {
+            background: rgba(0, 255, 0, 0.2);
+            color: var(--accent-green);
+            border: 1px solid var(--accent-green);
+        }
+
+        .changelog-tag.fixed {
+            background: rgba(255, 23, 68, 0.2);
+            color: var(--primary-red);
+            border: 1px solid var(--primary-red);
+        }
+
+        .changelog-tag.change {
+            background: rgba(100, 200, 255, 0.2);
+            color: #64c8ff;
+            border: 1px solid #64c8ff;
+        }
+
+        .changelog-tag.removed {
+            background: rgba(255, 100, 100, 0.2);
+            color: #ff6464;
+            border: 1px solid #ff6464;
+        }
+
+        .changelog-details {
+            color: var(--text-light);
+            line-height: 1.8;
+            font-size: 0.95rem;
+            margin-bottom: 1rem;
+        }
+
+        .changelog-list {
+            list-style: none;
+            margin: 1rem 0;
+        }
+
+        .changelog-list li {
+            padding: 0.5rem 0 0.5rem 1.5rem;
+            position: relative;
+            color: var(--text-light);
+        }
+
+        .changelog-list li::before {
+            content: '▸';
+            position: absolute;
+            left: 0;
+            color: var(--primary-red);
+        }
+
+        .changelog-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .changelog-search {
+            margin: 2rem 0;
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .changelog-search input {
+            padding: 0.8rem 1.5rem;
+            background: rgba(0, 0, 0, 0.3);
+            border: 2px solid var(--glass-border);
+            border-radius: 8px;
+            color: var(--text-light);
+            flex: 1;
+            min-width: 200px;
+            max-width: 300px;
+            transition: all 0.3s ease;
+        }
+
+        .changelog-search input:focus {
+            outline: none;
+            border-color: var(--primary-red);
+            box-shadow: 0 0 20px rgba(255, 23, 68, 0.3);
+        }
+
+        .changelog-search input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .season-3-highlight {
+            background: linear-gradient(135deg, rgba(255, 23, 68, 0.15), rgba(255, 23, 68, 0.05));
+            border: 2px solid var(--primary-red);
+            border-radius: 15px;
+            padding: 2.5rem;
+            margin-bottom: 3rem;
+            text-align: center;
+            animation: slideInUp 0.6s ease-out;
+        }
+
+        .season-3-highlight h3 {
+            font-family: 'Orbitron', monospace;
+            font-size: 2rem;
+            color: var(--primary-red);
+            margin-bottom: 1rem;
+        }
+
+        .season-3-highlight .highlight-items {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .highlight-item {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 1.5rem;
+            border-radius: 10px;
+            border: 1px solid var(--glass-border);
+            transition: all 0.3s ease;
+        }
+
+        .highlight-item:hover {
+            border-color: var(--primary-red);
+            box-shadow: 0 0 20px rgba(255, 23, 68, 0.3);
+            transform: translateY(-5px);
+        }
+
+        .highlight-item-icon {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .highlight-item-text {
+            font-size: 0.9rem;
+            color: var(--text-light);
+        }
+    </style>
+</head>
+<body>
+    <div class="animated-bg"></div>
+    <div class="bg-particles" id="particleContainer"></div>
+    <div class="cursor-glow" id="cursorGlow"></div>
+
+    <!-- Announcement Banner -->
+    <div class="announcement-banner" id="announcementBanner">
+        <button class="announcement-close" onclick="closeAnnouncement()">×</button>
+        <div class="announcement-title" id="announcementTitle">📢 New Announcement</div>
+        <div class="announcement-content" id="announcementContent">Announcement content will appear here</div>
+    </div>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">ZSMP</div>
+            <button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="suggestions.html">Suggestions</a></li>
+                <li><a href="changelog.html" class="active">Changelog</a></li>
+                <li><a href="https://discord.gg/zsmp" target="_blank">Discord</a></li>
+                <li><a href="admin.html" class="admin-link">🔐 Admin</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" style="min-height: 50vh; padding: 120px 2rem 3rem;">
+        <div class="hero-content">
+            <h1 class="hero-title">Changelog</h1>
+            <p class="hero-description">Latest updates and patch notes for Season 3 and beyond</p>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <section class="changelog-section">
+        <div class="section-container">
+            <!-- Season 3 Highlight -->
+            <div class="season-3-highlight">
+                <h3>🎮 Season 3 - New Start</h3>
+                <p style="color: var(--text-muted); margin-bottom: 1rem;">Full reset with all new plugins and a completely refurbished server</p>
+                
+                <div class="highlight-items">
+                    <div class="highlight-item">
+                        <div class="highlight-item-icon">🌍</div>
+                        <div class="highlight-item-text">World Reset</div>
+                    </div>
+                    <div class="highlight-item">
+                        <div class="highlight-item-icon">📏</div>
+                        <div class="highlight-item-text">1.5K Border</div>
+                    </div>
+                    <div class="highlight-item">
+                        <div class="highlight-item-icon">⚡</div>
+                        <div class="highlight-item-text">New Plugins</div>
+                    </div>
+                    <div class="highlight-item">
+                        <div class="highlight-item-icon">🔧</div>
+                        <div class="highlight-item-text">Refurbished</div>
+                    </div>
+                </div>
+
+                <p style="color: var(--text-muted); margin-top: 2rem; font-size: 0.9rem;">Server will wipe again at end of school year or start of next school year</p>
+            </div>
+
+            <!-- Changelog Timeline -->
+            <div class="changelog-timeline" id="changelogContainer">
+                <!-- Changelog entries will be populated here by JavaScript -->
+                <div style="text-align: center; color: var(--text-muted); padding: 3rem;">
+                    <p>📋 Season 3 changelog and patch notes will appear here</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-content">
+                <h3>ZSMP Network</h3>
+                <p>A Private Minecraft Eaglercraft Server For Friends</p>
+            </div>
+
+            <div class="footer-links">
+                <a href="suggestions.html">Suggestions</a>
+                <a href="changelog.html">Changelog</a>
+                <a href="https://discord.gg/zsmp" target="_blank">Discord</a>
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; 2024 ZSMP Network. Built with ❤️ for the Minecraft community.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Toast Notifications -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script src="script.js"></script>
+    <script>
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', () => {
+            generateParticles();
+            setupCursorGlow();
+            setupNavigation();
+            displayLatestAnnouncement();
+            displayTimelineChangelog();
+        });
+
+        // Display changelog in timeline format
+        function displayTimelineChangelog() {
+            const container = document.getElementById('changelogContainer');
+            const changelog = getStoredData(CONFIG.STORAGE_KEYS.changelog);
+
+            if (changelog.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align: center; color: var(--text-muted); padding: 3rem;">
+                        <p>📋 Waiting for changelog entries...</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = changelog.map((entry, index) => `
+                <div class="changelog-entry" style="animation-delay: ${index * 0.1}s;">
+                    <div style="opacity: 0;">
+                        <div class="changelog-dot"></div>
+                    </div>
+                    <div class="changelog-content">
+                        <div class="changelog-version">v${entry.version}</div>
+                        <div class="changelog-date">${entry.date}</div>
+                        <span class="changelog-tag ${entry.tag}">${entry.tag.toUpperCase()}</span>
+                        <h4 style="color: var(--light-red); margin: 0.5rem 0;">${escapeHtml(entry.title)}</h4>
+                        <p class="changelog-details">${escapeHtml(entry.content)}</p>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Override displayChangelog for this page
+        window.displayChangelog = displayTimelineChangelog;
+    </script>
+</body>
+</html>
