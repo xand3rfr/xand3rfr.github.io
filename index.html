@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZSMP - Minecraft Eaglercraft Server</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="animated-bg"></div>
+    <div class="bg-particles" id="particleContainer"></div>
+    <div class="cursor-glow" id="cursorGlow"></div>
+
+    <!-- Loading Screen -->
+    <div class="loading-screen" id="loadingScreen">
+        <div class="loading-container">
+            <div class="loading-cube"></div>
+            <div class="loading-text">ZSMP</div>
+            <div class="loading-bar">
+                <div class="loading-progress"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Announcement Banner -->
+    <div class="announcement-banner" id="announcementBanner">
+        <button class="announcement-close" onclick="closeAnnouncement()">×</button>
+        <div class="announcement-title" id="announcementTitle">📢 New Announcement</div>
+        <div class="announcement-content" id="announcementContent">Announcement content will appear here</div>
+    </div>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">ZSMP</div>
+            <button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="index.html" class="active">Home</a></li>
+                <li><a href="suggestions.html">Suggestions</a></li>
+                <li><a href="changelog.html">Changelog</a></li>
+                <li><a href="https://discord.gg/zsmp" target="_blank">Discord</a></li>
+                <li><a href="admin.html" class="admin-link">🔐 Admin</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" id="hero">
+        <div class="hero-background">
+            <div class="hero-glow hero-glow-1"></div>
+            <div class="hero-glow hero-glow-2"></div>
+            <div class="hero-glow hero-glow-3"></div>
+        </div>
+
+        <div class="floating-blocks">
+            <div class="block block-1"></div>
+            <div class="block block-2"></div>
+            <div class="block block-3"></div>
+        </div>
+
+        <div class="hero-content">
+            <h1 class="hero-title" id="heroTitle">ZSMP</h1>
+            <h2 class="hero-subtitle" id="heroSubtitle">Season 4 Coming Soon</h2>
+            <p class="hero-description" id="heroDescription">
+                Season 3 has officially ended. Get ready for a brand new start with your friends.
+            </p>
+
+            <div class="hero-buttons">
+                <button class="btn btn-primary" onclick="copyIP()">
+                    <span class="btn-text">📋 Copy Server IP</span>
+                    <span class="btn-ip" id="ipDisplay">zsmp.eagler.host</span>
+                </button>
+                <button class="btn btn-secondary" onclick="scrollToSection('stats')">Join Server</button>
+                <a href="https://discord.gg/zsmp" target="_blank" class="btn btn-tertiary">Discord</a>
+            </div>
+        </div>
+
+        <div class="hero-motd" id="heroMotd">
+            Welcome to ZSMP! Season 3 has ended. Season 4 is coming with new plugins and a fresh world.
+        </div>
+    </section>
+
+    <!-- MOTD Banner -->
+    <div class="motd-scroll" id="motdScroll">
+        <div class="motd-text">⚡ Season 3 Complete! ⚡ Fresh World Incoming ⚡ New Plugins ⚡ Season 3 Complete! ⚡ Fresh World Incoming ⚡ New Plugins ⚡</div>
+    </div>
+
+    <!-- Server Stats -->
+    <section class="stats-section" id="stats">
+        <div class="section-container">
+            <h2 class="section-title">Server Statistics</h2>
+            
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">👥</div>
+                    <div class="stat-number" id="onlinePlayers">12</div>
+                    <div class="stat-label">Online Players</div>
+                    <div class="stat-bar">
+                        <div class="stat-fill" style="width: 45%;"></div>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon">🎮</div>
+                    <div class="stat-number" id="totalPlayers">47</div>
+                    <div class="stat-label">Total Friends</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon">💬</div>
+                    <div class="stat-number">1.2K</div>
+                    <div class="stat-label">Discord Members</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon">🔄</div>
+                    <div class="stat-number">Season 3</div>
+                    <div class="stat-label">Current Season</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon">⛏️</div>
+                    <div class="stat-number">1.12.2</div>
+                    <div class="stat-label">Minecraft Version</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon">🗺️</div>
+                    <div class="stat-number">1.5K</div>
+                    <div class="stat-label">World Border</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Live Activity Feed -->
+    <section class="activity-section">
+        <div class="section-container">
+            <h2 class="section-title">Live Activity</h2>
+            
+            <div class="activity-feed" id="activityFeed">
+                <div class="activity-item">
+                    <div class="activity-avatar">👤</div>
+                    <div class="activity-content">
+                        <div class="activity-title">Player joined the server</div>
+                        <div class="activity-time">Just now</div>
+                    </div>
+                </div>
+
+                <div class="activity-item">
+                    <div class="activity-avatar">💡</div>
+                    <div class="activity-content">
+                        <div class="activity-title">New suggestion submitted</div>
+                        <div class="activity-time">2 minutes ago</div>
+                    </div>
+                </div>
+
+                <div class="activity-item">
+                    <div class="activity-avatar">🔧</div>
+                    <div class="activity-content">
+                        <div class="activity-title">Server maintenance completed</div>
+                        <div class="activity-time">1 hour ago</div>
+                    </div>
+                </div>
+
+                <div class="activity-item">
+                    <div class="activity-avatar">🎉</div>
+                    <div class="activity-content">
+                        <div class="activity-title">Season 3 officially ended</div>
+                        <div class="activity-time">1 day ago</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Countdown Section -->
+    <section class="countdown-section">
+        <div class="section-container">
+            <h2 class="section-title">Season 4 Countdown</h2>
+            
+            <div class="countdown-container">
+                <div class="countdown-box">
+                    <div class="countdown-number" id="countdownDays">0</div>
+                    <div class="countdown-label">Days</div>
+                </div>
+                <div class="countdown-separator">:</div>
+                <div class="countdown-box">
+                    <div class="countdown-number" id="countdownHours">0</div>
+                    <div class="countdown-label">Hours</div>
+                </div>
+                <div class="countdown-separator">:</div>
+                <div class="countdown-box">
+                    <div class="countdown-number" id="countdownMinutes">0</div>
+                    <div class="countdown-label">Minutes</div>
+                </div>
+            </div>
+
+            <p class="countdown-text">Get ready for a fresh world, new plugins, and exciting updates!</p>
+        </div>
+    </section>
+
+    <!-- Season 3 Highlights -->
+    <section class="highlights-section">
+        <div class="section-container">
+            <h2 class="section-title">Season 3 Highlights</h2>
+            
+            <div class="highlights-grid">
+                <div class="highlight-card">
+                    <div class="highlight-icon">🌍</div>
+                    <h3>Full World Reset</h3>
+                    <p>Fresh start with all new plugins and a completely refurbished server</p>
+                </div>
+
+                <div class="highlight-card">
+                    <div class="highlight-icon">📏</div>
+                    <h3>Expanded Borders</h3>
+                    <p>World border increased to 1.5K blocks (500 blocks bigger than Season 2)</p>
+                </div>
+
+                <div class="highlight-card">
+                    <div class="highlight-icon">⚡</div>
+                    <h3>Optimized Performance</h3>
+                    <p>Fully refurbished server infrastructure for smooth gameplay</p>
+                </div>
+
+                <div class="highlight-card">
+                    <div class="highlight-icon">🎮</div>
+                    <h3>Equal Start</h3>
+                    <p>Everyone starts fresh with equal opportunities from day one</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Call to Action -->
+    <section class="cta-section">
+        <div class="section-container">
+            <h2 class="cta-title">Ready to Join?</h2>
+            <p class="cta-description">Jump on the server and start your Season 4 adventure with friends</p>
+            
+            <div class="cta-buttons">
+                <button class="btn btn-primary btn-large" onclick="copyIP()">📋 Copy Server IP</button>
+                <button class="btn btn-secondary btn-large" onclick="scrollToTop()">Back to Top</button>
+                <a href="https://discord.gg/zsmp" target="_blank" class="btn btn-tertiary btn-large">Join Discord</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-content">
+                <h3>ZSMP Network</h3>
+                <p>A Private Minecraft Eaglercraft Server For Friends</p>
+            </div>
+
+            <div class="footer-links">
+                <a href="suggestions.html">Suggestions</a>
+                <a href="changelog.html">Changelog</a>
+                <a href="https://discord.gg/zsmp" target="_blank">Discord</a>
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; 2024 ZSMP Network. Built with ❤️ for the Minecraft community.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Toast Notifications -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script src="script.js"></script>
+</body>
+</html>
